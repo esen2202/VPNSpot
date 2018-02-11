@@ -1,0 +1,549 @@
+﻿<Window x:Class="VPNSpot.Test.VPNManagement"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        xmlns:local="clr-namespace:VPNSpot.Test"
+        xmlns:local2="clr-namespace:VPNSpot.ViewModel"
+        xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
+        mc:Ignorable="d"
+        Title="TestWindow2"
+        Height="544"
+        Width="467"
+        ResizeMode="NoResize"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Card.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Flipper.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Popupbox.xaml" />
+
+                <!-- throw in some extra colour for our floating action button -->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Green.Named.Primary.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+
+        </ResourceDictionary>
+
+    </Window.Resources>
+    <Border materialDesign:ShadowAssist.ShadowDepth="Depth3"
+            Background="White"
+            BorderThickness="1,1,1,1"
+            BorderBrush="#FF9CB4C5">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="34" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Border Background="#413f44"
+                    Grid.Row="0"
+                    x:Name="bd_WindowMainTitleBar"
+                    MouseLeftButtonDown="bd_WindowMainTitleBar_MouseLeftButtonDown"
+                    Opacity="1">
+                <DockPanel Grid.Row="0"
+                           HorizontalAlignment="Right"
+                           Margin="0,0,5,0">
+                    <Button HorizontalAlignment="Right"
+                            Width="40"
+                            Style="{DynamicResource WindowControlButton}"
+                            x:Name="btn_help"
+                            Click="btn_help_Click">
+                        <Label  Content="?"
+                                Foreground="White"
+                                FontSize="14" />
+                    </Button>
+
+                    <Button Visibility="Collapsed"
+                            HorizontalAlignment="Right"
+                            Width="40"
+                            Style="{DynamicResource WindowControlButton}"
+                            x:Name="btn_min"
+                            Click="btn_min_Click">
+                        <Path Data="M0,0 L1,0 "
+                              Stretch="Fill"
+                              Stroke="White"
+                              Margin="14,20,14,10"
+                              StrokeThickness="1" />
+                    </Button>
+                    <Button Visibility="Collapsed"
+                            HorizontalAlignment="Right"
+                            Width="40"
+                            Style="{DynamicResource WindowControlButton}"
+                            x:Name="btn_max"
+                            Click="btn_max_Click">
+                        <Rectangle Width="10"
+                                   Height="10"
+                                   Stretch="Fill"
+                                   StrokeThickness="1"
+                                   Stroke="White" />
+                    </Button>
+                    <Button HorizontalAlignment="Right"
+                            Width="40"
+                            Style="{DynamicResource WindowCloseButton}"
+                            x:Name="btn_close"
+                            Click="btn_close_Click"
+                            Margin="0,0,0,0">
+                        <Path Data="M0,0 L1,1 M0,1 L1,0"
+                              Stretch="Fill"
+                              Stroke="White"
+                              Margin="14,11"
+                              StrokeThickness="1" />
+                    </Button>
+                </DockPanel>
+            </Border>
+            <Grid Height="Auto"
+                  Grid.Row="1"
+                  VerticalAlignment="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0"
+                            Margin="0,0,0,0">
+                    <Border Height="28"
+                            Background="#FF787878">
+                        <StackPanel Orientation="Horizontal">
+
+                            <Button  Name="Btn_TvCollapse"
+                                     Style="{StaticResource MaterialDesignFlatButton}"
+                                     Background="#40F0F8FF"
+                                     Margin="3,0"
+                                     Padding="0"
+                                     Width="20"
+                                     Height="20"
+                                     Click="cmdCollapse_Click">
+                                <materialDesign:PackIcon Kind="ArrowCompress"
+                                                         Margin="0"
+                                                         Height="20"
+                                                         Width="20"
+                                                         materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                         Foreground="#FFFFFFFF" />
+                            </Button>
+                            
+                            <Button  Name="Btn_TvExpand"
+                                     Style="{StaticResource MaterialDesignFlatButton}"
+                                     Background="#40F0F8FF"
+                                     Margin="3,0" Padding="0" Width="20" Height="20"
+                                     Click="cmdExpandAll_Click">
+                                <materialDesign:PackIcon Kind="ArrowExpand" Margin="0"
+                                                         Height="20"
+                                                         Width="20"
+                                                         materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                         Foreground="#FFFFFFFF" />
+                            </Button>
+                           
+                        </StackPanel>
+                    </Border>
+                    <TreeView x:Name="Tv_Vpn"
+                              Height="480"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ItemsSource="{Binding Companies}"
+                              SelectedItemChanged="Tv_Vpn_SelectedItemChanged"
+                              Background="#FFEBF4FF"
+                              Margin="0,0,0,0">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded"
+                                        Value="{Binding IsExpanded, Mode=TwoWay}" />
+                                <Setter Property="IsSelected"
+                                        Value="{Binding IsSelected, Mode=TwoWay}" />
+                                <!--<Setter Property="FontWeight"
+                                Value="Normal" />-->
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected"
+                                             Value="True">
+                                        <Setter Property="FontWeight"
+                                                Value="Bold" />
+                                        <Setter Property="Background"
+                                                Value="LightGray" />
+                                        <Setter Property="Foreground"
+                                                Value="White" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type local2:CompanyViewModel}"
+                                                      ItemsSource="{Binding Children}">
+                                <TreeViewItem IsExpanded="True">
+                                    <TreeViewItem.Header>
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="0 0 0 0">
+                                            <Viewbox Width="16"
+                                                     Height="16">
+                                                <materialDesign:PackIcon Kind="Briefcase"
+                                                                         materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                                         Foreground="DarkOrange" />
+                                            </Viewbox>
+                                            <TextBlock Margin="0 0 0 0">
+           <Label Content="{Binding CompanyStr}"></Label>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </TreeViewItem.Header>
+
+                                </TreeViewItem>
+
+                            </HierarchicalDataTemplate>
+
+                            <HierarchicalDataTemplate DataType="{x:Type local2:LocationViewModel}"
+                                                      ItemsSource="{Binding Children}">
+                                <TreeViewItem>
+                                    <TreeViewItem.Header>
+                                        <StackPanel Orientation="Horizontal"
+                                                    Margin="0 0 0 0">
+                                            <Viewbox Width="16"
+                                                     Height="16">
+                                                <materialDesign:PackIcon Kind="MapMarker"
+                                                                         materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                                         Foreground="DeepSkyBlue" />
+                                            </Viewbox>
+                                            <TextBlock Margin="8 0 0 0">
+           <Label Content="{Binding LocationStr}"></Label>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </TreeViewItem.Header>
+                                </TreeViewItem>
+
+                            </HierarchicalDataTemplate>
+
+                            <HierarchicalDataTemplate DataType="{x:Type local2:VpnViewModel}"
+                                                      ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="50 0 0 0">
+                                    <Viewbox Width="16"
+                                             Height="16">
+                                        <materialDesign:PackIcon Kind="LanConnect"
+                                                                 materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                                 Foreground="DarkGreen" />
+                                    </Viewbox>
+                                    <TextBlock Margin="8 0 0 0">
+           <Label Content="{Binding VpnObj.VpnName}"></Label>
+                                    </TextBlock>
+                                </StackPanel>
+
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Margin="0,0,0,0">
+
+                    <smtx:XamlDisplay Key="card1"
+                                      Margin="8,8,-291,0"
+                                      VerticalContentAlignment="Top"
+                                      HorizontalAlignment="Left"
+                                      Width="500"
+                                      Height="452">
+                        <materialDesign:Flipper Style="{StaticResource MaterialDesignCardFlipper}"
+                                                Width="200"
+                                                Name="FlipperCard"
+                                                Height="450" >
+                            <materialDesign:Flipper.FrontContent>
+                                <Grid Height="275"
+                                      Width="200">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="230" />
+                                        <RowDefinition Height="35" />
+                                    </Grid.RowDefinitions>
+
+                                    <materialDesign:ColorZone Mode="PrimaryLight"
+                                                              VerticalAlignment="Top"
+                                                              Grid.Row="0">
+                                        <StackPanel Orientation="Vertical"
+                                                    VerticalAlignment="Top">
+                                            <StackPanel Orientation="Horizontal"
+                                                        HorizontalAlignment="Left"
+                                                        Margin="5,5">
+                                                <materialDesign:PackIcon Kind="Vpn"
+                                                                         Height="25"
+                                                                         Width="25"
+                                                                         Foreground="White" />
+                                                <Label Name="lbl_Card_VpnName"
+                                                       Content="..."
+                                                       FontWeight="Bold"
+                                                       FontSize="14"></Label>
+
+                                            </StackPanel>
+
+
+                                            <StackPanel Orientation="Horizontal"
+                                                        Margin="5,5">
+                                                <materialDesign:PackIcon Kind="Briefcase"
+                                                                         Height="23"
+                                                                         Width="20"
+                                                                         Foreground="BlueViolet" />
+                                                <Label Name="lbl_Card_Company"
+                                                       Content="-"
+                                                       Foreground="White"
+                                                       FontSize="14"></Label>
+
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Margin="5,5">
+                                                <materialDesign:PackIcon Kind="MapMarker"
+                                                                         Height="23"
+                                                                         Width="20"
+                                                                         Foreground="BlueViolet" />
+                                                <Label Name="lbl_Card_Location"
+                                                       Content="-"
+                                                       Foreground="White"
+                                                       FontSize="14"></Label>
+
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal"
+                                                        Margin="5,5">
+                                                <materialDesign:PackIcon Kind="ServerNetwork"
+                                                                         Height="23"
+                                                                         Width="20"
+                                                                         Foreground="BlueViolet" />
+                                                <Label Name="lbl_Card_ServerAddress"
+                                                       Content="-"
+                                                       Foreground="White"
+                                                       FontSize="14"></Label>
+
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal"
+                                                        Margin="5,5">
+                                                <materialDesign:PackIcon Kind="Account"
+                                                                         Height="23"
+                                                                         Width="20"
+                                                                         Foreground="BlueViolet" />
+                                                <Label Name="lbl_Card_User"
+                                                       Content="-"
+                                                       Foreground="White"
+                                                       FontSize="14"></Label>
+
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Margin="5,5">
+                                                <materialDesign:PackIcon Kind="LockOpen"
+                                                                         Height="20"
+                                                                         Width="20"
+                                                                         Foreground="BlueViolet" />
+                                                <Label Name="lbl_Card_Password"
+                                                       Content="-"
+                                                       Foreground="White"
+                                                       FontSize="14"></Label>
+
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                    </materialDesign:ColorZone>
+
+                                    <StackPanel Grid.Row="1"
+                                                Margin="5,0,5,0"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button  Name="Btn_NewVPN"
+                                                     Style="{StaticResource MaterialDesignFlatButton}"
+                                                     Background="AliceBlue"
+                                                     Margin="3,10"
+                                                     Click="Btn_NewVPN_Click">
+                                                <materialDesign:PackIcon Kind="PlusCircle"
+                                                                         Height="25"
+                                                                         Width="25"
+                                                                         materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                                         Foreground="ForestGreen" />
+                                            </Button>
+                                            <Button Name="Btn_EditVPN"
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Background="AliceBlue"
+                                                    Margin="3"
+                                                    Click="Btn_EditVPN_Click">
+                                                <materialDesign:PackIcon Kind="Pencil"
+                                                                         Height="25"
+                                                                         Width="25"
+                                                                         materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                                         Foreground="DarkBlue" />
+                                            </Button>
+                                            <Button Name="Btn_DeleteVPN"
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Background="AliceBlue"
+                                                    Margin="3"
+                                                    Click="Btn_DeleteVPN_Click">
+                                                <materialDesign:PackIcon Kind="Delete"
+                                                                         Height="25"
+                                                                         Width="25"
+                                                                         materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                                         Foreground="Red" />
+                                            </Button>
+                                        </StackPanel>
+
+                                    </StackPanel>
+                                </Grid>
+                            </materialDesign:Flipper.FrontContent>
+                            <materialDesign:Flipper.BackContent>
+                                <Grid Height="500"
+                                      Width="200">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <materialDesign:ColorZone Mode="Accent"
+                                                              Padding="6">
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--<Button Style="{StaticResource MaterialDesignToolForegroundButton}"
+                                                    Command="{x:Static materialDesign:Flipper.FlipCommand}"
+                                                    HorizontalAlignment="Left">
+                                                <materialDesign:PackIcon Kind="ArrowLeft"
+                                                                         HorizontalAlignment="Right" />
+                                            </Button>-->
+                                            <Button Name="Btn_CardBackward"
+                                                    Style="{StaticResource MaterialDesignToolForegroundButton}"
+                                                    HorizontalAlignment="Left"
+                                                    Click="Btn_CardBackward_Click">
+                                                <materialDesign:PackIcon Kind="ArrowLeft"
+                                                                         HorizontalAlignment="Right" />
+                                            </Button>
+                                            <Label Margin="8 0 0 0"
+                                                   Name="lbl_EditNewTitle"
+                                                   VerticalAlignment="Center">Edit VPN</Label>
+                                        </StackPanel>
+                                    </materialDesign:ColorZone>
+                                    <Grid Grid.Row="1"
+                                          Margin="0 6 0 0"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Top"
+                                          Height="450"
+                                          Width="172">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <TextBox Grid.Row="0"
+                                                 materialDesign:HintAssist.Hint="Vpn Name"
+                                                 Name="txt_VpnName"
+                                                 materialDesign:HintAssist.IsFloating="True"
+                                                 Margin="0 12 0 0"
+                                                 MaxLength="25"></TextBox>
+                                        <TextBox Grid.Row="1"
+                                                 Name="txt_ServerAddress"
+                                                 materialDesign:HintAssist.Hint="Server Addres/Name"
+                                                 materialDesign:HintAssist.IsFloating="True"
+                                                 Margin="0 12 0 0"
+                                                 MaxLength="25"></TextBox>
+                                        <TextBox Grid.Row="2"
+                                                 Name="txt_UserName"
+                                                 materialDesign:HintAssist.Hint="User Name"
+                                                 materialDesign:HintAssist.IsFloating="True"
+                                                 Margin="0 12 0 0"
+                                                 MaxLength="25"></TextBox>
+                                        <TextBox Grid.Row="3"
+                                                 materialDesign:HintAssist.Hint="Password"
+                                                 Name="txt_Password"
+                                                 materialDesign:HintAssist.IsFloating="True"
+                                                 Margin="0 12 0 0"
+                                                 MaxLength="25"></TextBox>
+                                        <TextBox Grid.Row="4"
+                                                 materialDesign:HintAssist.Hint="Company"
+                                                 Name="txt_Company"
+                                                 materialDesign:HintAssist.IsFloating="True"
+                                                 Margin="0 12 0 0"
+                                                 MaxLength="25"></TextBox>
+                                        <TextBox Grid.Row="5"
+                                                 materialDesign:HintAssist.Hint="Location"
+                                                 Name="txt_Location"
+                                                 materialDesign:HintAssist.IsFloating="True"
+                                                 Margin="0 12 0 0"
+                                                 MaxLength="25"></TextBox>
+                                        <StackPanel Grid.Row="6"
+                                                    Orientation="Horizontal"
+                                                    Margin="0 12 0 0"
+                                                    HorizontalAlignment="Center">
+                                            <Button Name="Btn_Save"
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Background="AliceBlue"
+                                                    Margin="10 4 2 0"
+                                                    Click="Btn_Save_Click">
+                                                <materialDesign:PackIcon Kind="Check"
+                                                                         Height="25"
+                                                                         Width="25"
+                                                                         materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                                         Foreground="ForestGreen" />
+                                            </Button>
+
+                                            <Button Name="Btn_Cancel"
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Background="AliceBlue"
+                                                    Margin="10 4 2 0"
+                                                    Click="Btn_Cancel_Click">
+                                                <materialDesign:PackIcon Kind="CloseCircle"
+                                                                         Height="25"
+                                                                         Width="25"
+                                                                         materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                                         Foreground="OrangeRed" />
+                                            </Button>
+
+                                        </StackPanel>
+                                        <StackPanel Grid.Row="7"
+                                                    Orientation="Horizontal"
+                                                    Margin="0 12 0 0"
+                                                    HorizontalAlignment="Right">
+
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </materialDesign:Flipper.BackContent>
+                        </materialDesign:Flipper>
+                    </smtx:XamlDisplay>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                Margin="17,0">
+                        <Button Name="Btn_ConnectVPN"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Background="#FF0088FF"
+                                Margin="0,10"
+                                Width="183"
+                                Click="Btn_ConnectVPN_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Connect"></Label>
+                                <materialDesign:PackIcon Kind="LanConnect"
+                                                         Height="25"
+                                                         Width="25"
+                                                         materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                                                         Foreground="Lime" />
+                            </StackPanel>
+
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
+                                     x:Name="MainSnackbar"
+                                     Grid.Row="1" />
+        </Grid>
+
+    </Border>
+
+
+</Window>

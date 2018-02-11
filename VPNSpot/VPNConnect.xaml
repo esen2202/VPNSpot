@@ -1,0 +1,132 @@
+﻿<Window x:Class="VPNSpot.VPNConnect"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        xmlns:local="clr-namespace:VPNSpot"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        x:Name="_this"
+        Title="VPNSpot"
+        Height="256"
+        Width="626.204"
+        Loaded="Window_Loaded"
+        ResizeMode="NoResize"
+        WindowStyle="ThreeDBorderWindow"
+        Icon="Assets/images/vpn.png">
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Width"
+                                     From="0"
+                                     To="320"
+                                     Duration="0:0:1">
+                        <!--<DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                     From="0.0"
+                                     To="1.0"
+                                     Duration="0:0:0.5">-->
+                        <DoubleAnimation.EasingFunction>
+                            <ExponentialEase EasingMode="EaseOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Grid>
+
+        <TextBox x:Name="txt_ServerAddress"
+                 HorizontalAlignment="Left"
+                 Height="26"
+                 Margin="147,10,0,0"
+                 TextWrapping="Wrap"
+                 VerticalAlignment="Top"
+                 Width="133" />
+        <TextBox x:Name="txt_UserName"
+                 HorizontalAlignment="Left"
+                 Height="26"
+                 Margin="147,41,0,0"
+                 TextWrapping="Wrap"
+                 VerticalAlignment="Top"
+                 Width="133" />
+        <TextBox x:Name="txt_Password"
+                 HorizontalAlignment="Left"
+                 Height="26"
+                 Margin="147,72,0,0"
+                 TextWrapping="Wrap"
+                 VerticalAlignment="Top"
+                 Width="133" />
+        <Label Content="Server Address"
+               HorizontalAlignment="Left"
+               Margin="22,10,0,0"
+               VerticalAlignment="Top"
+               Foreground="Black" />
+        <Label Content="User Name"
+               HorizontalAlignment="Left"
+               Margin="22,41,0,0"
+               VerticalAlignment="Top"
+               Foreground="Black" />
+        <Label Content="Password"
+               HorizontalAlignment="Left"
+               Margin="22,72,0,0"
+               VerticalAlignment="Top"
+               Foreground="Black" />
+        <Button x:Name="btn_Connect"
+                Content="Connect"
+                HorizontalAlignment="Left"
+                Height="26"
+                Margin="147,103,0,0"
+                VerticalAlignment="Top"
+                Width="133"
+                Click="btn_Connect_Click" />
+        <Button x:Name="btn_Disconnect"
+                Content="Disconnect"
+                HorizontalAlignment="Left"
+                Height="26"
+                Margin="147,134,0,0"
+                VerticalAlignment="Top"
+                Width="133"
+                Click="btn_Disconnect_Click" />
+        <Button x:Name="Btn_AddConnection"
+                Content="Add Connection"
+                HorizontalAlignment="Left"
+                Height="26"
+                Margin="27,103,0,0"
+                VerticalAlignment="Top"
+                Width="115"
+                Click="Btn_AddConnection_Click" />
+
+        <Grid Margin="10,177,0,0"
+              HorizontalAlignment="Left"
+              Width="270"
+              Height="60"
+              VerticalAlignment="Top">
+            <materialDesign:Card Padding="2"
+                                 Height="38">
+                <Label   x:Name="lbl_Status"
+                         Content="{Binding StatusText, ElementName=_this}"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top" />
+            </materialDesign:Card>
+        </Grid>
+        <Button x:Name="Btn_Test2"
+                Content="Add Connection"
+                HorizontalAlignment="Left"
+                Height="26"
+                Margin="27,134,0,0"
+                VerticalAlignment="Top"
+                Width="115"
+                Click="Btn_Test2_Click" />
+ 
+     
+    </Grid>
+</Window>
