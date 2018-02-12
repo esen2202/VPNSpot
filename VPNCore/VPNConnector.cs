@@ -4,23 +4,32 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace VPNCore
 {
+    public delegate void ConnectionStateChangedHandler();
+
     public class VPNConnector
     {
+        public static event ConnectionStateChangedHandler OnConnectionStatusChanged;
+        public static event ConnectionStateChangedHandler OnStartAuthentication;
+        public static event ConnectionStateChangedHandler OnConnected;
+        public static event ConnectionStateChangedHandler OnDisconnected;
+
+
         public VPNConnector(string serverAddress, string userName, string passWord)
            : this(serverAddress, serverAddress, userName, passWord, Protocol.SSTP)
         {
-
+            CreateDotrasEvents();
         }
         public VPNConnector(string serverAddress, string connectionName, string userName, string passWord)
             : this(serverAddress, connectionName, userName, passWord, Protocol.SSTP)
         {
-
+            CreateDotrasEvents();
         }
 
         public VPNConnector(string serverAddress, string connectionName, string userName, string passWord, Protocol protocol)
@@ -31,10 +40,16 @@ namespace VPNCore
             this.passWord = passWord;
             this.protocol = protocol;
             this.rasDialFileName = Path.Combine(WinDir, "rasdial.exe");
+
+            CreateDotrasEvents();
         }
 
         private static string WinDir = Environment.GetFolderPath(Environment.SpecialFolder.System);
         private string rasDialFileName;
+        private static RasDialer dialer = new RasDialer();
+        RasConnectionWatcher watcher = new RasConnectionWatcher();
+
+        public static string status;
 
         public string RasDialFileName
         {
@@ -147,6 +162,7 @@ namespace VPNCore
             return false;
         }
 
+
         public bool TryConnect()
         {
             try
@@ -155,7 +171,27 @@ namespace VPNCore
                 ProcessStartInfo myProcess = new ProcessStartInfo(rasDialFileName, args);
                 myProcess.CreateNoWindow = true;
                 myProcess.UseShellExecute = false;
-                Process.Start(myProcess);
+                var proc = Process.Start(myProcess);
+                //proc.WaitForExit();              
+                //string result;
+                //switch (proc.ExitCode)
+                //{
+                //    case 0: //connection succeeded
+                //        result = "Connected";
+                //        break;
+                //    case 691: //wrong credentials
+                //        result = "wrong credentials";
+                //        break;
+                //    case 623: // The VPN doesn't excist
+                //        result = "The VPN doesn't excist";
+                //        break;
+                //    case 868: //the IP or domainname can't be found
+                //        result = "the IP or domainname can't be found";
+                //        break;
+                //    default: //other faults
+                //        result = "other faults : " + proc.ExitCode.ToString();
+                //        break;
+                //}
             }
             catch (Exception Ex)
             {
@@ -197,7 +233,7 @@ namespace VPNCore
 
         public void CreateOrUpdate()
         {
-            using (var dialer = new RasDialer())
+
             using (var allUsersPhoneBook = new RasPhoneBook())
             {
                 allUsersPhoneBook.Open(true);
@@ -232,5 +268,104 @@ namespace VPNCore
                 }
             }
         }
+
+        #region Dotras
+
+        private void CreateDotrasEvents()
+        {
+            dialer.StateChanged += Dialer_StateChanged;
+            dialer.DialCompleted += Dialer_DialCompleted;
+            watcher.Connected += new EventHandler<RasConnectionEventArgs>(this.watcher_Connected);
+            watcher.Disconnected += new EventHandler<RasConnectionEventArgs>(this.watcher_Disconnected);
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private void watcher_Connected(object sender, RasConnectionEventArgs e)
+        {
+            OnConnected?.Invoke();
+        }
+        private void watcher_Disconnected(object sender, RasConnectionEventArgs e)
+        {
+            OnDisconnected?.Invoke();
+        }
+
+        private void Dialer_DialCompleted(object sender, DialCompletedEventArgs e)
+        {
+            string message = "";
+
+
+            if (e.Cancelled)
+            {
+                message = "Cancelled";
+            }
+            else if (e.TimedOut)
+            {
+                message = "Timeout";
+            }
+            else if (e.Connected)
+            {
+                message = "Connection successful";
+                OnConnected?.Invoke();
+            }
+            else if (e.Error != null)
+            {
+                message = e.Error.ToString();
+            }
+
+            if (!e.Connected)
+            {
+                OnDisconnected?.Invoke();
+                // Not Connected
+            }
+        }
+
+        private void Dialer_StateChanged(object sender, StateChangedEventArgs e)
+        {
+            status = e.State.ToString();
+            OnConnectionStatusChanged?.Invoke();
+        }
+
+        private RasHandle handle = null;
+        public bool ConnectDotras()
+        {
+            using (var allUsersPhoneBook = new RasPhoneBook())
+            {
+                allUsersPhoneBook.Open(true);
+                dialer.PhoneBookPath = allUsersPhoneBook.Path;
+            }
+            dialer.EntryName = connectionName;
+
+
+            try
+            {
+                dialer.Credentials = new NetworkCredential(userName, passWord);
+                this.handle = dialer.DialAsync();
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool DisconnectDotras()
+        {
+            if (dialer.IsBusy)
+            {
+                dialer.DialAsyncCancel();
+            }
+            else
+            {
+                RasConnection connection = RasConnection.GetActiveConnectionByHandle(handle);
+                if (connection != null)
+                {
+                    connection.HangUp();
+                }
+            }
+
+            return true;
+        }
+
+        #endregion
     }
 }

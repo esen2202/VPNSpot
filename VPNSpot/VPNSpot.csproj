@@ -39,8 +39,7 @@
     <StartupObject>VPNSpot.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>vpn.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -111,21 +110,10 @@
     <Compile Include="ViewModel\DataModel\Vpn.cs" />
     <Compile Include="ViewModel\LocationViewModel.cs" />
     <Compile Include="ViewModel\TreeViewItemViewModel.cs" />
-    <Page Include="AddConnection.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Assets\styles\Style.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VPNConnect.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="AddConnection.xaml.cs">
-      <DependentUpon>AddConnection.xaml</DependentUpon>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -138,10 +126,6 @@
     </Compile>
     <Compile Include="ViewModel\VpnCollectionViewModel.cs" />
     <Compile Include="ViewModel\VpnViewModel.cs" />
-    <Compile Include="VPNConnect.xaml.cs">
-      <DependentUpon>VPNConnect.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Page Include="StartApp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -211,7 +195,9 @@
     <Resource Include="Assets\images\Region.png" />
     <Resource Include="Assets\images\State.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="vpn.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.107.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.107.0\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

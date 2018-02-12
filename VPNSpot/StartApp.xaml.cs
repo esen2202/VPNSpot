@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using VPNSpot.Settings;
-using VPNSpot.Test;
+using VPNSpot.Control;
+using System.Windows.Threading;
+using System.Threading;
+using System.Net.NetworkInformation;
+using VPNCore;
 
 namespace VPNSpot
 {
@@ -59,13 +54,48 @@ namespace VPNSpot
         {
             InitializeComponent();
             GetLocationValues();
-           
+
             this.Left = lastPosLeft;
             this.Top = lastPosTop;
 
-            OnConnecting
+            VPNConnector.OnConnectionStatusChanged += VPNConnector_OnConnectionStatusChanged;
+            VPNConnector.OnStartAuthentication += VPNConnector_OnStartAuthentication;
+            VPNConnector.OnConnected += VPNConnector_OnConnected;
+            VPNConnector.OnDisconnected += VPNConnector_OnDisconnected;
         }
 
+        private void VPNConnector_OnDisconnected()
+        {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                Tb_Status.Text = "Disconnected";
+            });
+        }
+
+        private void VPNConnector_OnConnected()
+        {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                Tb_Status.Text = "Connected";
+            });
+        }
+
+        private void VPNConnector_OnStartAuthentication()
+        {
+            
+        }
+
+        private void VPNConnector_OnConnectionStatusChanged()
+        {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                Tb_VpnName.Text = VPNManagement.ConnectVPNInfo.VpnName;
+                Tb_ServerName.Text = VPNManagement.ConnectVPNInfo.ServerAddress;
+                Tb_Status.Foreground = new SolidColorBrush(Colors.Red);
+                Tb_Status.Text = VPNConnector.status != ""? VPNConnector.status : "-";
+            });
+        }
+ 
         private void Flipper_IsFlippedChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
 
@@ -89,10 +119,7 @@ namespace VPNSpot
             }
         }
 
-        private void Btn_EopyLink_Click(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://www.eopy.com.tr/en");
-        }
+ 
 
         private void Btn_MinimizedApp_Click(object sender, RoutedEventArgs e)
         {
@@ -134,6 +161,36 @@ namespace VPNSpot
             lastPosLeft = this.Left;
             lastPosTop = this.Top;
             SaveLocationValues();
+        }
+
+        private void Btn_Settings_Click(object sender, RoutedEventArgs e)
+        {
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
+                foreach (NetworkInterface Interface in interfaces)
+                {
+                    if (Interface.Description == VPNManagement.VPNAdapterName && Interface.OperationalStatus == OperationalStatus.Up)
+                    {
+                        if ((Interface.NetworkInterfaceType == NetworkInterfaceType.Ppp) && (Interface.NetworkInterfaceType != NetworkInterfaceType.Loopback))
+                        {
+                            var test = Interface;
+                            
+                            IPv4InterfaceStatistics statistics = Interface.GetIPv4Statistics();
+                            MessageBox.Show(Interface.Name + " " + Interface.NetworkInterfaceType.ToString() + " " + Interface.Description);
+                        }
+                        else
+                        {
+                            MessageBox.Show("VPN Connection is lost!");
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Btn_Link_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/esen2202");
         }
     }
 }
