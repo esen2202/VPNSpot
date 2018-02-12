@@ -16,7 +16,7 @@ namespace VPNTest
             db = new DB("VPNSpotDB");
             db.CheckDB();
             VPNobject data = new VPNobject { VpnName = "Deneme", Company="eopy", UserName ="isim", Password="pass" , Location="izmir",ServerAddress="serverAddd"};
-            db.AddRecord(data);
+            db.AddRecord(ref data);
         }
     }
 }

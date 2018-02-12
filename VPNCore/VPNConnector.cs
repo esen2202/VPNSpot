@@ -147,6 +147,7 @@ namespace VPNCore
             return false;
         }
 
+
         public bool TryConnect()
         {
             try
@@ -155,7 +156,27 @@ namespace VPNCore
                 ProcessStartInfo myProcess = new ProcessStartInfo(rasDialFileName, args);
                 myProcess.CreateNoWindow = true;
                 myProcess.UseShellExecute = false;
-                Process.Start(myProcess);
+                var proc = Process.Start(myProcess);
+                //proc.WaitForExit();              
+                //string result;
+                //switch (proc.ExitCode)
+                //{
+                //    case 0: //connection succeeded
+                //        result = "Connected";
+                //        break;
+                //    case 691: //wrong credentials
+                //        result = "wrong credentials";
+                //        break;
+                //    case 623: // The VPN doesn't excist
+                //        result = "The VPN doesn't excist";
+                //        break;
+                //    case 868: //the IP or domainname can't be found
+                //        result = "the IP or domainname can't be found";
+                //        break;
+                //    default: //other faults
+                //        result = "other faults : " + proc.ExitCode.ToString();
+                //        break;
+                //}
             }
             catch (Exception Ex)
             {
@@ -232,5 +253,15 @@ namespace VPNCore
                 }
             }
         }
+
+        #region Dotras
+
+        public bool ConnectDotras()
+        {
+
+            return true;
+        }
+
+        #endregion
     }
 }

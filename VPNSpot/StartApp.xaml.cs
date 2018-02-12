@@ -12,7 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using VPNSpot.Settings;
-using VPNSpot.Test;
+using VPNSpot.Control;
+using System.Windows.Threading;
+using System.Threading;
+using System.Net.NetworkInformation;
 
 namespace VPNSpot
 {
@@ -59,11 +62,46 @@ namespace VPNSpot
         {
             InitializeComponent();
             GetLocationValues();
-           
+
             this.Left = lastPosLeft;
             this.Top = lastPosTop;
 
-            OnConnecting
+            VPNManagement.OnConnecting += VPNManagement_OnConnecting;
+            VPNManagement.OnConnected += VPNManagement_OnConnected;
+            VPNManagement.OnDisconnected += VPNManagement_OnDisconnected;
+        }
+
+        private void VPNManagement_OnDisconnected()
+        {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                Tb_VpnName.Text = VPNManagement.ConnectVPNInfo.VpnName;
+                Tb_ServerName.Text = VPNManagement.ConnectVPNInfo.ServerAddress;
+                Tb_Status.Foreground = new SolidColorBrush(Colors.Red);
+                Tb_Status.Text = "Not Connected!";
+            });
+        }
+
+        private void VPNManagement_OnConnected()
+        {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                Tb_VpnName.Text = VPNManagement.ConnectVPNInfo.VpnName;
+                Tb_ServerName.Text = VPNManagement.ConnectVPNInfo.ServerAddress;
+                Tb_Status.Foreground = new SolidColorBrush(Colors.Green);
+                Tb_Status.Text = "Connected :)";
+            });
+        }
+
+        private void VPNManagement_OnConnecting()
+        {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                Tb_VpnName.Text = VPNManagement.ConnectVPNInfo.VpnName;
+                Tb_ServerName.Text = VPNManagement.ConnectVPNInfo.ServerAddress;
+                Tb_Status.Foreground = new SolidColorBrush(Colors.CadetBlue);
+                Tb_Status.Text = "Connecting..."; 
+            });
         }
 
         private void Flipper_IsFlippedChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
@@ -134,6 +172,31 @@ namespace VPNSpot
             lastPosLeft = this.Left;
             lastPosTop = this.Top;
             SaveLocationValues();
+        }
+
+        private void Btn_Settings_Click(object sender, RoutedEventArgs e)
+        {
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
+                foreach (NetworkInterface Interface in interfaces)
+                {
+                    if (Interface.Description == VPNManagement.VPNAdapterName && Interface.OperationalStatus == OperationalStatus.Up)
+                    {
+                        if ((Interface.NetworkInterfaceType == NetworkInterfaceType.Ppp) && (Interface.NetworkInterfaceType != NetworkInterfaceType.Loopback))
+                        {
+                            var test = Interface;
+                            
+                            IPv4InterfaceStatistics statistics = Interface.GetIPv4Statistics();
+                            MessageBox.Show(Interface.Name + " " + Interface.NetworkInterfaceType.ToString() + " " + Interface.Description);
+                        }
+                        else
+                        {
+                            MessageBox.Show("VPN Connection is lost!");
+                        }
+                    }
+                }
+            }
         }
     }
 }

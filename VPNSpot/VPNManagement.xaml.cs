@@ -18,11 +18,11 @@ using VPNModel;
 using VPNSpot.ViewModel;
 using VPNSpot.ViewModel.DataModel;
 
-namespace VPNSpot.Test
+namespace VPNSpot.Control
 {
     public delegate void ConnectEventHandler();
     public delegate void DisconnectEventHandler();
- 
+
 
     /// <summary>
     /// Interaction logic for TestWindow2.xaml
@@ -30,7 +30,10 @@ namespace VPNSpot.Test
     public partial class VPNManagement : Window
     {
         #region Definations
-        private string VPNName { get { return "VPNSpot"; } }
+        public static string VPNAdapterName { get { return "VPNSpot"; } }
+        public static VPNobject ConnectVPNInfo;
+        public static string Status = "-";
+
 
         public static VPNobject SelectedVPN = new VPNobject { Id = -1, VpnName = "Null" };
 
@@ -40,6 +43,12 @@ namespace VPNSpot.Test
         private VpnCollectionViewModel viewModel;
 
         public static Snackbar Snackbar;
+
+        Thread connectThread;
+        private static VPNCore.VPNConnector vpnConnector;
+        public static event ConnectEventHandler OnConnected;
+        public static event ConnectEventHandler OnConnecting;
+        public static event DisconnectEventHandler OnDisconnected;
 
         #endregion
 
@@ -55,32 +64,6 @@ namespace VPNSpot.Test
             OnConnecting += VPNManagement_OnConnecting;
             OnConnected += VPNManagement_OnConnected;
             OnDisconnected += VPNManagement_OnDisconnected;
-        }
-
-        private void VPNManagement_OnConnecting()
-        {
-            Snackbar.MessageQueue.Enqueue("Baglantı Kuruluyor");
-            Btn_ConnectVPN.IsEnabled = false;
-        }
-
-        private void VPNManagement_OnDisconnected()
-        {
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-            {
-                Snackbar.MessageQueue.Enqueue("Baglantı Basarısız!!!");
-                Btn_ConnectVPN.IsEnabled = true;
-            });
-
-               
-        }
-
-        private void VPNManagement_OnConnected()
-        {
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-            {
-                Snackbar.MessageQueue.Enqueue("Baglandı!!!");
-                Btn_ConnectVPN.IsEnabled = true;
-            });
         }
 
         private void TreeViewDataSourceUpdate()
@@ -129,6 +112,23 @@ namespace VPNSpot.Test
             txt_ServerAddress.Text = lbl_Card_ServerAddress.Content.ToString();
             txt_UserName.Text = lbl_Card_User.Content.ToString();
             txt_Password.Text = lbl_Card_Password.Content.ToString();
+        }
+
+        private void LoadTextBoxFromObject()
+        {
+            if (SelectedVPN.Id != -1) {
+                txt_VpnName.Text = SelectedVPN.VpnName;
+                txt_Company.Text = SelectedVPN.Company != "" ? SelectedVPN.Company : "Undefined";
+                txt_Location.Text = SelectedVPN.Location != "" ? SelectedVPN.Location : "Undefined";
+                txt_ServerAddress.Text = SelectedVPN.ServerAddress;
+                txt_UserName.Text = SelectedVPN.UserName;
+                txt_Password.Text = SelectedVPN.Password;
+            }
+            else
+            {
+                ClearTextBoxes();
+            }
+           
         }
 
         private void LoadObjectFromTextBox()
@@ -353,7 +353,7 @@ namespace VPNSpot.Test
                         Tv_Vpn.IsEnabled = true;
                         TreeViewDataSourceUpdate();
                     }
-                   
+
                     break;
                 default:
                     break;
@@ -364,8 +364,9 @@ namespace VPNSpot.Test
         private void Btn_Cancel_Click(object sender, RoutedEventArgs e)
         {
             FlipperCard.IsFlipped = false;
-            Snackbar.MessageQueue.Enqueue("Cancelled!");
+            Snackbar.MessageQueue.Enqueue("Not Saved!");
             Tv_Vpn.IsEnabled = true;
+            LoadTextBoxFromObject();
 
         }
 
@@ -374,6 +375,7 @@ namespace VPNSpot.Test
             FlipperCard.IsFlipped = false;
             Snackbar.MessageQueue.Enqueue("Not Saved!");
             Tv_Vpn.IsEnabled = true;
+            LoadTextBoxFromObject();
         }
 
         #endregion
@@ -435,7 +437,7 @@ namespace VPNSpot.Test
                 ConnectVPN();
             }
 
-           
+
         }
 
         void ConnectVPN()
@@ -445,7 +447,9 @@ namespace VPNSpot.Test
                 string serverAddress = txt_ServerAddress.Text;
                 string userName = txt_UserName.Text;
                 string password = txt_Password.Text;
-                ThreadStart connect = delegate { ConnectThread(serverAddress, VPNName, userName, password); };
+                ConnectVPNInfo = new VPNobject { ServerAddress = serverAddress, UserName = userName, Password = password, VpnName = txt_VpnName.Text == "" ? "-" : txt_VpnName.Text };
+                
+                ThreadStart connect = delegate { ConnectThread(serverAddress, VPNAdapterName, userName, password); };
 
                 connectThread = new Thread(connect)
                 {
@@ -475,13 +479,8 @@ namespace VPNSpot.Test
             }
         }
 
-        Thread connectThread;
-        private static VPNCore.VPNConnector vpnConnector;
-        public static event ConnectEventHandler OnConnected;
-        public static event ConnectEventHandler OnConnecting;
-        public static event DisconnectEventHandler OnDisconnected;
-        
-        private static void ConnectThread(string ServerAddress,string VpnName,string UserName, string Password)
+
+        private static void ConnectThread(string ServerAddress, string VpnName, string UserName, string Password)
         {
             vpnConnector = new VPNCore.VPNConnector(ServerAddress, VpnName, UserName, Password);
             vpnConnector.CreateOrUpdate();
@@ -498,7 +497,35 @@ namespace VPNSpot.Test
             }
         }
 
+        private void VPNManagement_OnConnecting()
+        {
+            Status = "Connecting...";
+            Snackbar.MessageQueue.Enqueue(Status);
+            Btn_ConnectVPN.IsEnabled = false;
+            
+        }
 
+        private void VPNManagement_OnDisconnected()
+        {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                Status = "Not Connected!";
+                Snackbar.MessageQueue.Enqueue(Status);                
+                Btn_ConnectVPN.IsEnabled = true;
+            });
+
+
+        }
+
+        private void VPNManagement_OnConnected()
+        {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                Status = "Connected :)";
+                Snackbar.MessageQueue.Enqueue(Status);
+                Btn_ConnectVPN.IsEnabled = true;
+            });
+        }
         #endregion
     }
 }

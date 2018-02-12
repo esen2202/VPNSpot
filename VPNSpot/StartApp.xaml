@@ -37,8 +37,35 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Green.Named.Primary.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
+            <Storyboard x:Key="CardMouseOver">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="card">
+                    <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#E55AA5E4">
+                        <EasingColorKeyFrame.EasingFunction>
+                            <BackEase EasingMode="EaseIn"/>
+                        </EasingColorKeyFrame.EasingFunction>
+                    </EasingColorKeyFrame>
+                </ColorAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Key="CardMouseLeave">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="card">
+                    <EasingColorKeyFrame KeyTime="0" Value="#E55AA5E4">
+                        <EasingColorKeyFrame.EasingFunction>
+                            <BackEase EasingMode="EaseIn"/>
+                        </EasingColorKeyFrame.EasingFunction>
+                    </EasingColorKeyFrame>
+                    <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#5900D0FF"/>
+                </ColorAnimationUsingKeyFrames>
+            </Storyboard>
         </ResourceDictionary>
     </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="UIElement.MouseEnter" SourceName="card">
+            <BeginStoryboard x:Name="CardMouseOver_BeginStoryboard" Storyboard="{StaticResource CardMouseOver}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="UIElement.MouseLeave" SourceName="card">
+            <BeginStoryboard x:Name="CardMouseLeave_BeginStoryboard" Storyboard="{StaticResource CardMouseLeave}"/>
+        </EventTrigger>
+    </Window.Triggers>
     <Grid>
 
         <Grid>
@@ -118,7 +145,7 @@
                             ToolTip="Settings"
                             Background="#FFF0F03C"
                             Foreground="Black"
-                            BorderBrush="White">
+                            BorderBrush="White" Click="Btn_Settings_Click">
                         <materialDesign:PackIcon Kind="Settings" />
                     </Button>
 
@@ -126,43 +153,36 @@
             </materialDesign:PopupBox>
         </Grid>
 
-        <Canvas Height="60"
+        <Canvas Height="49.333"
                 VerticalAlignment="Bottom"
-                Margin="0,0,0,59">
-            <materialDesign:Card Background="#3000D0FF"
+                Margin="0,0,0,60.667">
+            <materialDesign:Card x:Name="card" Background="#5900D0FF"
                                  Margin="1"
                                  VerticalAlignment="Bottom">
-                <StackPanel Height="50"
+                <StackPanel Height="40"
                             Width="85"
                             Margin="2"
                             VerticalAlignment="Bottom">
+                    <TextBlock x:Name="Tb_VpnName"
+                               FontSize="10"
+                               Margin="5,0">
+                        <TextBlock.LayoutTransform>
+                            <RotateTransform Angle="0" />
+                        </TextBlock.LayoutTransform><Run Text="-" /></TextBlock>
+
                     <TextBlock x:Name="Tb_ServerName"
                                FontSize="10"
                                Margin="5,0">
                         <TextBlock.LayoutTransform>
                             <RotateTransform Angle="0" />
-                        </TextBlock.LayoutTransform><Run Text="ServerName" /></TextBlock>
-
-                    <TextBlock x:Name="Tb_Company"
-                               FontSize="10"
-                               Margin="5,0">
-                        <TextBlock.LayoutTransform>
-                            <RotateTransform Angle="0" />
-                        </TextBlock.LayoutTransform><Run Text="Company" /></TextBlock>
-
-                    <TextBlock x:Name="Tb_Location"
-                               FontSize="10"
-                               Margin="5,0">
-                        <TextBlock.LayoutTransform>
-                            <RotateTransform Angle="0" />
-                        </TextBlock.LayoutTransform><Run Text="Location" /></TextBlock>
+                        </TextBlock.LayoutTransform><Run Text="-" /></TextBlock>
 
                     <TextBlock x:Name="Tb_Status"
                                FontSize="10"
                                Margin="5,0">
                         <TextBlock.LayoutTransform>
                             <RotateTransform Angle="0" />
-                        </TextBlock.LayoutTransform><Run Text="Status" /></TextBlock>
+                        </TextBlock.LayoutTransform><Run Text="-" /></TextBlock>
                 </StackPanel>
 
             </materialDesign:Card>

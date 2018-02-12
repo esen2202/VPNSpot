@@ -14,7 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VPNModel;
 using VPNSpot.Settings;
-using VPNSpot.Test;
+using VPNSpot;
+using VPNSpot.Control;
 
 namespace VPNSpot
 {
