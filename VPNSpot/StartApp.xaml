@@ -39,20 +39,21 @@
             </ResourceDictionary.MergedDictionaries>
             <Storyboard x:Key="CardMouseOver">
                 <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="card">
-                    <EasingColorKeyFrame KeyTime="0:0:0.3"
-                                         Value="#FFFFFFFF">
-                         
+                    <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#E55AA5E4">
+                        <EasingColorKeyFrame.EasingFunction>
+                            <BackEase EasingMode="EaseIn"/>
+                        </EasingColorKeyFrame.EasingFunction>
                     </EasingColorKeyFrame>
                 </ColorAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="CardMouseLeave">
                 <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="card">
-                    <EasingColorKeyFrame KeyTime="0"
-                                         Value="#FFFFFFFF">
-                        
+                    <EasingColorKeyFrame KeyTime="0" Value="#E55AA5E4">
+                        <EasingColorKeyFrame.EasingFunction>
+                            <BackEase EasingMode="EaseIn"/>
+                        </EasingColorKeyFrame.EasingFunction>
                     </EasingColorKeyFrame>
-                    <EasingColorKeyFrame KeyTime="0:0:0.3"
-                                         Value="#CFFFFFFF"/>
+                    <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#5900D0FF"/>
                 </ColorAnimationUsingKeyFrames>
             </Storyboard>
         </ResourceDictionary>
@@ -122,12 +123,12 @@
                         <materialDesign:PackIcon Kind="WindowMinimize" />
                     </Button>
 
-                    <Button Name="Btn_Link"
-                            ToolTip="on Github"
+                    <Button Name="Btn_EopyLink"
+                            ToolTip="www.eopy.com.tr"
                             Background="#FF3AAEFF"
                             Foreground="White"
                             BorderBrush="White"
-                            Click="Btn_Link_Click">
+                            Click="Btn_EopyLink_Click">
                         <materialDesign:PackIcon Kind="Link" />
                     </Button>
 
@@ -155,8 +156,7 @@
         <Canvas Height="49.333"
                 VerticalAlignment="Bottom"
                 Margin="0,0,0,60.667">
-            <materialDesign:Card x:Name="card"
-                                 Background="#CFFFFFFF"
+            <materialDesign:Card x:Name="card" Background="#5900D0FF"
                                  Margin="1"
                                  VerticalAlignment="Bottom">
                 <StackPanel Height="40"
