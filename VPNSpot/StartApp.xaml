@@ -123,12 +123,12 @@
                         <materialDesign:PackIcon Kind="WindowMinimize" />
                     </Button>
 
-                    <Button Name="Btn_EopyLink"
-                            ToolTip="www.eopy.com.tr"
+                    <Button Name="Btn_Link"
+                            ToolTip="on Github"
                             Background="#FF3AAEFF"
                             Foreground="White"
                             BorderBrush="White"
-                            Click="Btn_EopyLink_Click">
+                            Click="Btn_Link_Click">
                         <materialDesign:PackIcon Kind="Link" />
                     </Button>
 
